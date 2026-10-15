@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/nuvora-core/nuvora/internal/models"
 )
 
 // maxFileSize caps the size of files the viewer can open.
@@ -97,5 +99,89 @@ func ReadFile(
 		"name":    filepath.Base(abs),
 		"size":    info.Size(),
 		"content": string(data),
+	})
+}
+
+// SaveFile writes new content to an existing file.
+func SaveFile(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var req models.SaveFileReq
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "invalid request",
+		})
+
+		return
+	}
+
+	if req.Path == "" {
+		w.WriteHeader(http.StatusBadRequest)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "path is required",
+		})
+
+		return
+	}
+
+	abs, err := filepath.Abs(req.Path)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "invalid path",
+		})
+
+		return
+	}
+
+	info, err := os.Stat(abs)
+
+	if err != nil || info.IsDir() {
+		w.WriteHeader(http.StatusBadRequest)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "not a file",
+		})
+
+		return
+	}
+
+	if len(req.Content) > maxFileSize {
+		w.WriteHeader(http.StatusRequestEntityTooLarge)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "file is too large to save",
+		})
+
+		return
+	}
+
+	if err := os.WriteFile(abs, []byte(req.Content), info.Mode().Perm()); err != nil {
+		fmt.Println("files: save file error:", err)
+
+		w.WriteHeader(http.StatusInternalServerError)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "failed to save file",
+		})
+
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(map[string]any{
+		"status": "saved",
 	})
 }

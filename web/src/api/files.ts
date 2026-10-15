@@ -21,3 +21,15 @@ export async function readFile(
 
   return (await res.json()) as FileContent
 }
+
+export async function saveFile(path: string, content: string): Promise<void> {
+  const res = await fetch('/api/v1/file', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path, content }),
+  })
+
+  if (!res.ok) {
+    throw new Error(await toErrorMessage(res))
+  }
+}

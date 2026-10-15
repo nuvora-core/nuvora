@@ -1,15 +1,43 @@
 .file-viewer {
+  display: flex;
   flex: 1;
+  flex-direction: column;
   min-height: 0;
-  padding: 16px;
-  overflow: auto;
 }
 
-.file-viewer-code {
-  margin: 0;
+.file-viewer-message {
+  padding: 16px;
+}
+
+.file-editor {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  padding: 16px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
   font-family: var(--mono);
   font-size: 13px;
   line-height: 1.6;
-  color: var(--text);
+  resize: none;
   tab-size: 2;
+  white-space: pre;
+  overflow: auto;
+}
+
+.file-status {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding: 4px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-subtle);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.file-status-error {
+  color: var(--danger);
 }

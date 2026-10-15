@@ -85,6 +85,8 @@ func main() {
 		r.Get("/entries", entries.BrowseEntries)
 
 		r.Get("/file", files.ReadFile)
+
+		r.Put("/file", files.SaveFile)
 	})
 
 	// everything else is served by the embedded frontend

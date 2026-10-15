@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { ArrowLeft, File, X } from 'lucide-react'
 import type { FileEntry } from '../api/entries'
 import FileTree from '../components/FileTree'
@@ -18,8 +18,25 @@ function ProjectPage({ projectId, onBack }: ProjectPageProps) {
 
   const [openFiles, setOpenFiles] = useState<FileEntry[]>([])
   const [activePath, setActivePath] = useState<string | null>(null)
+  const [dirtyPaths, setDirtyPaths] = useState<Record<string, boolean>>({})
 
-  const activeFile = openFiles.find((file) => file.path === activePath) ?? null
+  const handleDirtyChange = useCallback((path: string, dirty: boolean) => {
+    setDirtyPaths((current) => {
+      if (current[path] === dirty) {
+        return current
+      }
+
+      const next = { ...current }
+
+      if (dirty) {
+        next[path] = true
+      } else {
+        delete next[path]
+      }
+
+      return next
+    })
+  }, [])
 
   function openFile(file: FileEntry) {
     setOpenFiles((current) =>
@@ -30,10 +47,27 @@ function ProjectPage({ projectId, onBack }: ProjectPageProps) {
   }
 
   function closeFile(path: string) {
+    if (dirtyPaths[path] === true) {
+      const file = openFiles.find((item) => item.path === path)
+      const label = file?.name ?? 'This file'
+
+      if (!window.confirm(`"${label}" has unsaved changes. Discard them?`)) {
+        return
+      }
+    }
+
     const index = openFiles.findIndex((file) => file.path === path)
     const next = openFiles.filter((file) => file.path !== path)
 
     setOpenFiles(next)
+
+    setDirtyPaths((current) => {
+      const updated = { ...current }
+
+      delete updated[path]
+
+      return updated
+    })
 
     if (activePath === path) {
       // Activate the tab on the right, otherwise the one on the left.
@@ -121,22 +155,33 @@ function ProjectPage({ projectId, onBack }: ProjectPageProps) {
                       <span className="tab-name">{file.name}</span>
                     </button>
 
+                    {dirtyPaths[file.path] === true && (
+                      <span className="tab-dirty" title="Unsaved changes" aria-hidden="true" />
+                    )}
+
                     <button
                       type="button"
                       className="tab-close"
                       aria-label={`Close ${file.name}`}
                       onClick={() => closeFile(file.path)}
                     >
-                      <X size={13} strokeWidth={2} aria-hidden="true" />
+                      <X size={15} strokeWidth={2} aria-hidden="true" />
                     </button>
                   </div>
                 )
               })}
             </div>
 
-            {activeFile !== null && (
-              <FileViewer key={activeFile.path} path={activeFile.path} />
-            )}
+            {/* All viewers stay mounted so unsaved buffers survive tab switches. */}
+            {openFiles.map((file) => (
+              <div
+                className="viewer-slot"
+                key={file.path}
+                hidden={file.path !== activePath}
+              >
+                <FileViewer path={file.path} onDirtyChange={handleDirtyChange} />
+              </div>
+            ))}
           </>
         )}
       </main>
