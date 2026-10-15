@@ -10,6 +10,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/nuvora-core/nuvora/internal/config"
+	"github.com/nuvora-core/nuvora/internal/handlers/entries"
+	"github.com/nuvora-core/nuvora/internal/handlers/files"
+	"github.com/nuvora-core/nuvora/internal/handlers/folders"
 	"github.com/nuvora-core/nuvora/internal/handlers/projects"
 	"github.com/nuvora-core/nuvora/internal/handlers/providers"
 	"github.com/nuvora-core/nuvora/internal/store"
@@ -76,6 +79,12 @@ func main() {
 		r.Post("/project", projects.CreateNewProject)
 
 		r.Get("/project", projects.MyProjects)
+
+		r.Get("/folders", folders.BrowseFolders)
+
+		r.Get("/entries", entries.BrowseEntries)
+
+		r.Get("/file", files.ReadFile)
 	})
 
 	// everything else is served by the embedded frontend

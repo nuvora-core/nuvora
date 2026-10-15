@@ -1,0 +1,172 @@
+.workspace {
+  display: flex;
+  height: 100svh;
+}
+
+/* Project explorer sidebar */
+
+.workspace-sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 280px;
+  max-width: 70vw;
+  border-right: 1px solid var(--border);
+  background: var(--bg-subtle);
+}
+
+.workspace-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.workspace-title {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-explorer {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.workspace-message {
+  padding: 12px;
+}
+
+/* Main area */
+
+.workspace-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.workspace-welcome {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  overflow: hidden;
+}
+
+/* Tabs */
+
+.tabs {
+  display: flex;
+  flex-shrink: 0;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-subtle);
+}
+
+.tab {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+  height: 38px;
+  padding: 0 6px 0 12px;
+  border-right: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.tab.is-active {
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: inset 0 1px 0 var(--text);
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 180px;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.tab-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tab-close {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.tab-close:hover {
+  background: var(--active);
+  color: var(--text);
+}
+
+/* Faint centered logo, like the watermark in the VS Code editor. */
+.workspace-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(45vh, 60vw, 300px);
+  height: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0.07;
+  pointer-events: none;
+  user-select: none;
+}
+
+.workspace-empty {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.workspace-name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.workspace-path {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}

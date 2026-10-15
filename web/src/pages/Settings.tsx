@@ -71,7 +71,7 @@ function ConnectCard({ provider, onConnected }: ConnectCardProps) {
         </label>
 
         {error !== null && (
-          <p className="provider-error" role="alert">
+          <p className="form-error" role="alert">
             {error}
           </p>
         )}
@@ -156,7 +156,7 @@ function ConnectedCard({ provider, onRemove }: ConnectedCardProps) {
       </div>
 
       {error !== null && (
-        <p className="provider-error" role="alert">
+        <p className="form-error" role="alert">
           {error}
         </p>
       )}
@@ -187,8 +187,8 @@ function Settings() {
         {loading && <p className="muted">Loading providers...</p>}
 
         {!loading && error !== null && (
-          <div className="settings-error" role="alert">
-            <p className="settings-error-message">{error}</p>
+          <div className="error-panel" role="alert">
+            <p className="error-panel-message">{error}</p>
             <button type="button" className="button-secondary" onClick={reload}>
               Try again
             </button>

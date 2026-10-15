@@ -10,12 +10,18 @@
   top: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   width: var(--sidebar-width);
   height: 100svh;
   padding: 16px 12px;
   border-right: 1px solid var(--border);
   background: var(--bg-subtle);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 16px;
 }
 
 .sidebar-brand {
@@ -50,6 +56,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-top: auto;
+  padding-top: 12px;
 }
 
 .sidebar-button {
@@ -115,7 +123,8 @@
 
 /* The logo is black; invert it on dark surfaces. */
 [data-theme='dark'] .sidebar-brand-logo,
-[data-theme='dark'] .main-logo {
+[data-theme='dark'] .main-logo,
+[data-theme='dark'] .workspace-watermark {
   filter: invert(1);
 }
 
