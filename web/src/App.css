@@ -1,0 +1,143 @@
+.app {
+  display: flex;
+  min-height: 100svh;
+}
+
+/* Sidebar */
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: var(--sidebar-width);
+  height: 100svh;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border);
+  background: var(--bg-subtle);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.sidebar-brand:hover {
+  background: var(--hover);
+}
+
+.sidebar-brand-logo {
+  width: 24px;
+  height: 24px;
+}
+
+.sidebar-brand-name {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.sidebar-button:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.sidebar-button:active {
+  background: var(--active);
+}
+
+.sidebar-button.is-active {
+  background: var(--active);
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Main */
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.home {
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px;
+}
+
+.main-logo {
+  width: 96px;
+  height: 96px;
+}
+
+.main-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* The logo is black; invert it on dark surfaces. */
+[data-theme='dark'] .sidebar-brand-logo,
+[data-theme='dark'] .main-logo {
+  filter: invert(1);
+}
+
+/* Mobile: collapse the sidebar to an icon rail. */
+@media (max-width: 640px) {
+  .sidebar {
+    width: var(--sidebar-width-mobile);
+    padding: 12px 8px;
+  }
+
+  .sidebar-brand,
+  .sidebar-button {
+    justify-content: center;
+    padding: 8px;
+  }
+
+  .sidebar-button {
+    min-height: 44px;
+  }
+
+  .sidebar-brand-name,
+  .sidebar-button-label {
+    display: none;
+  }
+}

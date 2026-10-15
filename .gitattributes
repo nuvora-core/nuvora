@@ -1,0 +1,6 @@
+# Hide stylesheets and HTML files from the GitHub language stats.
+*.css linguist-detectable=false
+*.html linguist-detectable=false
+
+# The built frontend is generated output, not source code.
+web/dist/** linguist-generated=true
