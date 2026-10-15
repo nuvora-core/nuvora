@@ -72,6 +72,13 @@ CREATE TABLE IF NOT EXISTS providers (
 	base_url TEXT NOT NULL UNIQUE,
 	api_key TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS projects (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL UNIQUE,
+	root_path TEXT NOT NULL,
+	created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 `
 
 	if _, err := DB.Exec(schema); err != nil {

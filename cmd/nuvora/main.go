@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/nuvora-core/nuvora/internal/config"
+	"github.com/nuvora-core/nuvora/internal/handlers/projects"
 	"github.com/nuvora-core/nuvora/internal/handlers/providers"
 	"github.com/nuvora-core/nuvora/internal/store"
 	"github.com/nuvora-core/nuvora/web"
@@ -71,6 +72,10 @@ func main() {
 		r.Get("/provider", providers.GetYourProviders)
 
 		r.Delete("/provider/{id}", providers.DeleteProvider)
+
+		r.Post("/project", projects.CreateNewProject)
+
+		r.Get("/project", projects.MyProjects)
 	})
 
 	// everything else is served by the embedded frontend
