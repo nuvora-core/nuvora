@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { Plug } from 'lucide-react'
+import { Plug, Trash2 } from 'lucide-react'
 import { connectProvider } from '../api/providers'
+import type { Provider } from '../api/providers'
 import ProviderLogo from '../components/ProviderLogo'
 import { useProviders } from '../hooks/useProviders'
 import { PROVIDER_CATALOG, getProviderMeta } from '../lib/providers'
@@ -83,8 +84,93 @@ function ConnectCard({ provider, onConnected }: ConnectCardProps) {
   )
 }
 
+type ConnectedCardProps = {
+  provider: Provider
+  onRemove: (id: number) => Promise<void>
+}
+
+function ConnectedCard({ provider, onRemove }: ConnectedCardProps) {
+  const meta = getProviderMeta(provider.name)
+  const [confirming, setConfirming] = useState(false)
+  const [removing, setRemoving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleRemove() {
+    setRemoving(true)
+    setError(null)
+
+    try {
+      await onRemove(provider.id)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'failed to remove provider')
+      setRemoving(false)
+      setConfirming(false)
+    }
+  }
+
+  const name = meta?.name ?? provider.name
+
+  return (
+    <article
+      className="provider-card"
+      onMouseLeave={() => {
+        if (!removing) {
+          setConfirming(false)
+        }
+      }}
+    >
+      <div className="provider-card-header">
+        <span className="provider-tile">
+          {meta !== undefined ? (
+            <ProviderLogo provider={meta} />
+          ) : (
+            <Plug size={22} strokeWidth={1.75} aria-hidden="true" />
+          )}
+        </span>
+
+        <div className="provider-card-info">
+          <h3 className="provider-name">{name}</h3>
+          <p className="provider-base-url">{provider.base_url}</p>
+        </div>
+
+        {confirming ? (
+          <button
+            type="button"
+            className="button-danger"
+            aria-label={`Confirm removing ${name}`}
+            disabled={removing}
+            onClick={() => void handleRemove()}
+          >
+            {removing ? 'Removing...' : 'Remove?'}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="icon-button"
+            aria-label={`Remove ${name}`}
+            onClick={() => setConfirming(true)}
+          >
+            <Trash2 size={16} strokeWidth={1.75} aria-hidden="true" />
+          </button>
+        )}
+      </div>
+
+      {error !== null && (
+        <p className="provider-error" role="alert">
+          {error}
+        </p>
+      )}
+
+      <span className="provider-status">
+        <span className="provider-status-dot" aria-hidden="true" />
+        Connected
+      </span>
+    </article>
+  )
+}
+
 function Settings() {
-  const { providers, loading, error, reload } = useProviders()
+  const { providers, loading, error, reload, refresh, remove } = useProviders()
 
   return (
     <div className="settings">
@@ -117,34 +203,13 @@ function Settings() {
 
         {!loading && error === null && providers.length > 0 && (
           <div className="provider-grid">
-            {providers.map((provider) => {
-              const meta = getProviderMeta(provider.name)
-
-              return (
-                <article className="provider-card" key={provider.base_url}>
-                  <div className="provider-card-header">
-                    <span className="provider-tile">
-                      {meta !== undefined ? (
-                        <ProviderLogo provider={meta} />
-                      ) : (
-                        <Plug size={22} strokeWidth={1.75} aria-hidden="true" />
-                      )}
-                    </span>
-                    <div className="provider-card-info">
-                      <h3 className="provider-name">
-                        {meta?.name ?? provider.name}
-                      </h3>
-                      <p className="provider-base-url">{provider.base_url}</p>
-                    </div>
-                  </div>
-
-                  <span className="provider-status">
-                    <span className="provider-status-dot" aria-hidden="true" />
-                    Connected
-                  </span>
-                </article>
-              )
-            })}
+            {providers.map((provider) => (
+              <ConnectedCard
+                key={provider.id}
+                provider={provider}
+                onRemove={remove}
+              />
+            ))}
           </div>
         )}
       </section>
@@ -157,7 +222,7 @@ function Settings() {
             <ConnectCard
               key={provider.id}
               provider={provider}
-              onConnected={reload}
+              onConnected={refresh}
             />
           ))}
         </div>

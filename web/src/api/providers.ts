@@ -1,4 +1,5 @@
 export type Provider = {
+  id: number
   name: string
   base_url: string
 }
@@ -31,6 +32,14 @@ export async function listProviders(signal?: AbortSignal): Promise<Provider[]> {
   const data = (await res.json()) as ProvidersResponse
 
   return data.providers ?? []
+}
+
+export async function deleteProvider(id: number): Promise<void> {
+  const res = await fetch(`/api/v1/provider/${id}`, { method: 'DELETE' })
+
+  if (!res.ok) {
+    throw new Error(await toErrorMessage(res))
+  }
 }
 
 export async function connectProvider(name: string, apiKey: string): Promise<void> {

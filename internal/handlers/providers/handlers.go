@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/nuvora-core/nuvora/internal/config"
 	"github.com/nuvora-core/nuvora/internal/models"
 	"github.com/nuvora-core/nuvora/internal/security"
@@ -163,7 +165,11 @@ func GetYourProviders(
 	for rows.Next() {
 		var provider models.Provider
 
-		if err := rows.Scan(&provider.Name, &provider.BaseURL); err != nil {
+		if err := rows.Scan(
+			&provider.ID,
+			&provider.Name,
+			&provider.BaseURL,
+		); err != nil {
 			fmt.Println("providers: scan provider error:", err)
 
 			w.WriteHeader(http.StatusInternalServerError)
@@ -196,5 +202,81 @@ func GetYourProviders(
 
 	json.NewEncoder(w).Encode(map[string]any{
 		"providers": providers,
+	})
+}
+
+func DeleteProvider(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	w.Header().Set("Content-Type", "application/json")
+
+	providerID, err := strconv.Atoi(
+		chi.URLParam(r, "id"),
+	)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "invalid provider id",
+		})
+
+		return
+	}
+
+	if store.DB == nil {
+		w.WriteHeader(http.StatusInternalServerError)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "database not connected",
+		})
+
+		return
+	}
+
+	result, err := store.DB.ExecContext(r.Context(), `
+		DELETE FROM providers WHERE id = ?
+	`, providerID)
+	if err != nil {
+		fmt.Println("providers: delete provider error:", err)
+
+		w.WriteHeader(http.StatusInternalServerError)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "failed to delete provider",
+		})
+
+		return
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		fmt.Println("providers: delete provider rows affected error:", err)
+
+		w.WriteHeader(http.StatusInternalServerError)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "failed to delete provider",
+		})
+
+		return
+	}
+
+	if affected == 0 {
+		w.WriteHeader(http.StatusNotFound)
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "provider not found",
+		})
+
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(map[string]any{
+		"status": "deleted",
+		"id":     providerID,
 	})
 }

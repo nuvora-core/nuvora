@@ -104,6 +104,62 @@
   overflow-wrap: anywhere;
 }
 
+.provider-card-header .icon-button,
+.provider-card-header .button-danger {
+  margin-left: auto;
+}
+
+.icon-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.icon-button:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.icon-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-danger {
+  flex-shrink: 0;
+  min-height: 28px;
+  padding: 3px 10px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.button-danger:hover {
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+}
+
+.button-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .provider-status {
   display: inline-flex;
   align-self: flex-start;

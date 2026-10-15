@@ -69,6 +69,8 @@ func main() {
 		r.Post("/provider", providers.ConnectProvider)
 
 		r.Get("/provider", providers.GetYourProviders)
+
+		r.Delete("/provider/{id}", providers.DeleteProvider)
 	})
 
 	// everything else is served by the embedded frontend

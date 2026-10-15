@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { listProviders } from '../api/providers'
+import { deleteProvider, listProviders } from '../api/providers'
 import type { Provider } from '../api/providers'
 
 export function useProviders() {
@@ -35,10 +35,20 @@ export function useProviders() {
     return () => controller.abort()
   }, [load])
 
+  // Silent refresh, without flipping back to the loading state.
+  const refresh = useCallback(() => {
+    void load()
+  }, [load])
+
   const reload = useCallback(() => {
     setLoading(true)
     void load()
   }, [load])
 
-  return { providers, loading, error, reload }
+  const remove = useCallback(async (id: number) => {
+    await deleteProvider(id)
+    setProviders((current) => current.filter((provider) => provider.id !== id))
+  }, [])
+
+  return { providers, loading, error, reload, refresh, remove }
 }
