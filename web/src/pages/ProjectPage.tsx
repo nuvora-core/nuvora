@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
-import { ArrowLeft, File, X } from 'lucide-react'
+import { ArrowLeft, File, MessageSquare, X } from 'lucide-react'
 import type { FileEntry } from '../api/entries'
+import ChatPanel from '../components/ChatPanel'
 import FileTree from '../components/FileTree'
 import FileViewer from '../components/FileViewer'
 import { useProjects } from '../hooks/useProjects'
@@ -19,6 +20,7 @@ function ProjectPage({ projectId, onBack }: ProjectPageProps) {
   const [openFiles, setOpenFiles] = useState<FileEntry[]>([])
   const [activePath, setActivePath] = useState<string | null>(null)
   const [dirtyPaths, setDirtyPaths] = useState<Record<string, boolean>>({})
+  const [chatOpen, setChatOpen] = useState(false)
 
   const handleDirtyChange = useCallback((path: string, dirty: boolean) => {
     setDirtyPaths((current) => {
@@ -124,6 +126,16 @@ function ProjectPage({ projectId, onBack }: ProjectPageProps) {
       </aside>
 
       <main className="workspace-main">
+        <button
+          type="button"
+          className="chat-toggle icon-button"
+          aria-label={chatOpen ? 'Close AI chat' : 'Open AI chat'}
+          aria-expanded={chatOpen}
+          onClick={() => setChatOpen((current) => !current)}
+        >
+          <MessageSquare size={16} strokeWidth={1.75} aria-hidden="true" />
+        </button>
+
         {openFiles.length === 0 ? (
           <div className="workspace-welcome">
             <img className="workspace-watermark" src={logo} alt="" />
@@ -185,6 +197,10 @@ function ProjectPage({ projectId, onBack }: ProjectPageProps) {
           </>
         )}
       </main>
+
+      {chatOpen && (
+        <ChatPanel projectId={projectId} onClose={() => setChatOpen(false)} />
+      )}
     </div>
   )
 }

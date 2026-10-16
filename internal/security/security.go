@@ -54,6 +54,48 @@ func EncryptAPIKey(apiKey string) (string, error) {
 	return base64.StdEncoding.EncodeToString(sealed), nil
 }
 
+// DecryptAPIKey decrypts a value produced by EncryptAPIKey
+// (base64(nonce || ciphertext)).
+func DecryptAPIKey(encoded string) (string, error) {
+	key, err := loadOrCreateSecretKey()
+
+	if err != nil {
+		return "", err
+	}
+
+	sealed, err := base64.StdEncoding.DecodeString(encoded)
+
+	if err != nil {
+		return "", fmt.Errorf("decode api key: %w", err)
+	}
+
+	block, err := aes.NewCipher(key)
+
+	if err != nil {
+		return "", fmt.Errorf("new cipher: %w", err)
+	}
+
+	gcm, err := cipher.NewGCM(block)
+
+	if err != nil {
+		return "", fmt.Errorf("new gcm: %w", err)
+	}
+
+	nonceSize := gcm.NonceSize()
+
+	if len(sealed) < nonceSize {
+		return "", errors.New("invalid api key length")
+	}
+
+	plain, err := gcm.Open(nil, sealed[:nonceSize], sealed[nonceSize:], nil)
+
+	if err != nil {
+		return "", fmt.Errorf("decrypt api key: %w", err)
+	}
+
+	return string(plain), nil
+}
+
 // loadOrCreateSecretKey reads the AES key from the nuvora directory and
 // generates a new random 32-byte key (0600) the first time it is needed.
 func loadOrCreateSecretKey() ([]byte, error) {

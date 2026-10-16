@@ -15,6 +15,7 @@ import (
 	"github.com/nuvora-core/nuvora/internal/handlers/folders"
 	"github.com/nuvora-core/nuvora/internal/handlers/projects"
 	"github.com/nuvora-core/nuvora/internal/handlers/providers"
+	"github.com/nuvora-core/nuvora/internal/handlers/sessions"
 	"github.com/nuvora-core/nuvora/internal/store"
 	"github.com/nuvora-core/nuvora/web"
 )
@@ -76,6 +77,8 @@ func main() {
 
 		r.Delete("/provider/{id}", providers.DeleteProvider)
 
+		r.Get("/models", providers.ListModels)
+
 		r.Post("/project", projects.CreateNewProject)
 
 		r.Get("/project", projects.MyProjects)
@@ -87,6 +90,14 @@ func main() {
 		r.Get("/file", files.ReadFile)
 
 		r.Put("/file", files.SaveFile)
+
+		r.Post("/session", sessions.CreateSession)
+
+		r.Get("/session", sessions.ListSessions)
+
+		r.Get("/session/{id}/messages", sessions.GetMessages)
+
+		r.Post("/session/{id}/message", sessions.SendMessage)
 	})
 
 	// everything else is served by the embedded frontend

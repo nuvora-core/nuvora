@@ -46,10 +46,20 @@
 /* Main area */
 
 .workspace-main {
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
   min-width: 0;
+}
+
+/* AI chat toggle, in the top right corner of the editor area. */
+
+.chat-toggle {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 3;
 }
 
 .workspace-welcome {
@@ -68,6 +78,7 @@
 .tabs {
   display: flex;
   flex-shrink: 0;
+  padding-right: 44px;
   overflow-x: auto;
   border-bottom: 1px solid var(--border);
   background: var(--bg-subtle);
